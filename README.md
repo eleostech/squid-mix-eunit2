@@ -1,21 +1,24 @@
 # MixEunit
 
-**TODO: Add description**
+Allows you to run eunit tests with "mix eunit".
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mix_eunit` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:mix_eunit, "~> 0.1.0"}
-  ]
-end
+```
+mix archive.build
+mix archive.install
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/mix_eunit](https://hexdocs.pm/mix_eunit).
+This installs to `~/.mix/archives`.
 
+If you're using `kiex` to manage a different project, and you want `mix eunit` to
+be available there, either run `mix archive.install path/to/mix_eunit` from that
+project, or set MIX_ARCHIVES when building this project.
+
+For example:
+
+```
+mix archive.build \
+    && mix archive.install --force \
+    && MIX_ARCHIVES=$HOME/.kiex/mix/archives/elixir-1.9.4 mix archive.install --force
+```
