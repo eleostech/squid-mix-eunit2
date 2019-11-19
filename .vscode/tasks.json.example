@@ -1,0 +1,19 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "mix archive.build && mix archive.install --force && MIX_ARCHIVES=$HOME/.kiex/mix/archives/elixir-1.9.4 mix archive.install --force",
+            "problemMatcher": [
+                "$mixCompileError"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
