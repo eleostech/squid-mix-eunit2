@@ -1,6 +1,12 @@
 # MixEunit
 
-Allows you to run eunit tests with "mix eunit".
+Allows you to run eunit tests with "mix eunit":
+
+```
+mix eunit
+```
+
+Supports umbrella projects.
 
 ## Installation
 
