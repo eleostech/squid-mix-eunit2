@@ -30,3 +30,9 @@ mix archive.build \
     && mix archive.install --force \
     && MIX_ARCHIVES=$HOME/.kiex/mix/archives/elixir-1.9.4 mix archive.install --force
 ```
+
+## Usage
+
+```
+MIX_ENV=test mix do compile, eunit
+```
