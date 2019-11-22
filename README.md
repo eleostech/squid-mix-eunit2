@@ -18,8 +18,10 @@ mix archive.install
 This installs to `~/.mix/archives`.
 
 If you're using `kiex` to manage a different project, and you want `mix eunit` to
-be available there, either run `mix archive.install path/to/mix_eunit` from that
-project, or set MIX_ARCHIVES when building this project.
+be available there, there are two options:
+
+1. Set MIX_ARCHIVES when building this project.
+2. Run `mix archive.build` in this project, to create the `.ez` file and then run `mix archive.install path/to/mix_eunit/mix_eunit-0.1.0.ez` from the other project.
 
 For example:
 
