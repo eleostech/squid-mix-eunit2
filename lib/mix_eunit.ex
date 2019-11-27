@@ -19,7 +19,10 @@ defmodule Mix.Tasks.Eunit do
     Code.append_path(ebin_path)
 
     modules = get_test_modules(ebin_path)
-    :eunit.test(modules, opts)
+    case :eunit.test(modules, opts) do
+      :ok -> :ok
+      :error -> Mix.raise("One or more tests failed.")
+    end
   end
 
   defp get_test_modules(ebin_path) do
