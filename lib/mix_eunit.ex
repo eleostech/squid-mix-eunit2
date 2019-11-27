@@ -4,7 +4,26 @@ defmodule Mix.Tasks.Eunit do
   @shortdoc "Run eunit tests"
 
   @moduledoc """
-  MIX_ENV=test mix do compile, eunit
+  Runs the eunit tests for a project.
+
+  Usage:
+
+      MIX_ENV=test mix do compile, eunit
+
+  This task assumes that MIX_ENV=test causes your Erlang project to define
+  the `TEST` macro, and to add "test" to the `erlc_paths` option.
+
+  ## Command line options
+
+    * `--verbose` - enables verbose output
+    * `--surefire` - enables Surefire-compatible XML output
+    * `--cover` - exports coverage data. See below.
+
+  ## Coverage
+
+  In order to get coverage data, you need to compile with coverage enabled:
+
+      MIX_ENV=test mix do compile --cover --force, eunit --cover
   """
 
   @recursive true
