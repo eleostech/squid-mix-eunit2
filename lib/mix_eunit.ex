@@ -14,8 +14,8 @@ defmodule Mix.Tasks.Eunit do
 
   @impl true
   def run(args) do
-    {opts, _, _} = OptionParser.parse(args, strict: [verbose: :boolean, cover: :boolean])
-    opts = convert_opts(opts)
+    {opts, _, _} =
+      OptionParser.parse(args, strict: [verbose: :boolean, surefire: :boolean, cover: :boolean])
 
     Mix.shell().print_app()
 
@@ -30,31 +30,31 @@ defmodule Mix.Tasks.Eunit do
     Code.append_path(ebin_path)
 
     modules = get_test_modules(ebin_path)
-    case :eunit.test(modules, opts) do
+    eunit_opts = convert_opts(opts)
+
+    case :eunit.test(modules, eunit_opts) do
       :ok -> :ok
       :error -> Mix.raise("One or more tests failed.")
+    end
+
+    if opts[:cover] do
+      :cover.export("eunit.coverdata")
     end
   end
 
   defp convert_opts(opts) do
-    result = if opts[:verbose] do
-      [:verbose]
-    else
-      []
-    end
-
-    result = if opts[:cover] do
-      result ++ [{:report, {:eunit_surefire, [{:dir, "."}]}}]
-    end
-
-    result |> IO.inspect
+    Enum.flat_map(opts, &convert_opt/1)
   end
+
+  defp convert_opt({:verbose, true}), do: [:verbose]
+  defp convert_opt({:surefire, true}), do: [{:report, {:eunit_surefire, [{:dir, "."}]}}]
+  defp convert_opt(_), do: []
 
   defp get_test_modules(ebin_path) do
     glob = Path.join([ebin_path, "*.beam"])
 
     Path.wildcard(glob)
-    |> Enum.map(&(Path.basename(&1, ".beam")))
+    |> Enum.map(&Path.basename(&1, ".beam"))
     |> remove_duplicates
     |> Enum.map(&String.to_atom/1)
   end
