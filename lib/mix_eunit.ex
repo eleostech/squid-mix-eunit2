@@ -13,8 +13,9 @@ defmodule Mix.Tasks.Eunit do
   def run, do: run([])
 
   @impl true
-  def run(_args) do
-    opts = [:verbose]
+  def run(args) do
+    {opts, _, _} = OptionParser.parse(args, strict: [verbose: :boolean, cover: :boolean])
+    opts = convert_opts(opts)
 
     Mix.shell().print_app()
 
@@ -33,6 +34,20 @@ defmodule Mix.Tasks.Eunit do
       :ok -> :ok
       :error -> Mix.raise("One or more tests failed.")
     end
+  end
+
+  defp convert_opts(opts) do
+    result = if opts[:verbose] do
+      [:verbose]
+    else
+      []
+    end
+
+    result = if opts[:cover] do
+      result ++ [{:report, {:eunit_surefire, [{:dir, "."}]}}]
+    end
+
+    result |> IO.inspect
   end
 
   defp get_test_modules(ebin_path) do
