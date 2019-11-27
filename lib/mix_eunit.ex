@@ -1,6 +1,12 @@
 defmodule Mix.Tasks.Eunit do
   use Mix.Task
 
+  @shortdoc "Run eunit tests"
+
+  @moduledoc """
+  MIX_ENV=test mix do compile, eunit
+  """
+
   @recursive true
   @preferred_cli_env :test
 
