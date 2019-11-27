@@ -16,6 +16,8 @@ defmodule Mix.Tasks.Eunit do
   def run(_args) do
     opts = [:verbose]
 
+    Mix.shell().print_app()
+
     Mix.Task.run("loadpaths")
 
     # ".../top/_build/test/lib/app"
