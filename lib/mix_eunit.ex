@@ -57,7 +57,7 @@ defmodule Mix.Tasks.Eunit do
     end
 
     if opts[:cover] do
-      :cover.export("eunit.coverdata")
+      :cover.export(Path.join([app_path, "eunit.coverdata"]))
     end
   end
 
