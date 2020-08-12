@@ -17,13 +17,13 @@ defmodule Mix.Tasks.Eunit do
 
     * `--verbose` - enables verbose output
     * `--surefire` - enables Surefire-compatible XML output
-    * `--cover` - exports coverage data. See below.
+    * `--cover` - exports coverage data (as `eunit.coverdata`)
 
   ## Coverage
 
-  In order to get coverage data, you need to compile with coverage enabled:
+  To get coverage data, run with the `--cover` switch:
 
-      MIX_ENV=test mix do compile --cover --force, eunit --cover
+      MIX_ENV=test mix do compile, eunit --cover
   """
 
   @recursive true
@@ -37,6 +37,7 @@ defmodule Mix.Tasks.Eunit do
       OptionParser.parse(args, strict: [verbose: :boolean, surefire: :boolean, cover: :boolean])
 
     Mix.shell().print_app()
+    project = Mix.Project.config()
 
     Mix.Task.run("loadpaths")
 
@@ -51,13 +52,32 @@ defmodule Mix.Tasks.Eunit do
     modules = get_test_modules(ebin_path)
     eunit_opts = convert_opts(opts)
 
+    if opts[:cover] do
+      _ = :cover.stop()
+      {:ok, _pid} = :cover.start()
+
+      compile_path = Mix.Project.compile_path(project)
+      case :cover.compile_beam_directory(to_charlist(compile_path)) do
+        results when is_list(results) ->
+          :ok
+
+        {:error, reason} ->
+          Mix.raise(
+            "Failed to cover compile directory #{inspect(Path.relative_to_cwd(compile_path))} " <>
+              "with reason: #{inspect(reason)}"
+          )
+      end
+    end
+
     case :eunit.test(modules, eunit_opts) do
       :ok -> :ok
       :error -> Mix.raise("One or more tests failed.")
     end
 
     if opts[:cover] do
-      :cover.export(Path.join([app_path, "eunit.coverdata"]))
+      coverdata = Path.join([app_path, "eunit.coverdata"])
+      :cover.export(coverdata)
+      _ = :cover.stop()
     end
   end
 
