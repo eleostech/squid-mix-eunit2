@@ -50,7 +50,7 @@ defmodule Mix.Tasks.Eunit do
     Code.append_path(ebin_path)
 
     modules = get_test_modules(ebin_path)
-    eunit_opts = convert_opts(opts)
+    eunit_opts = convert_opts(opts, app_path)
 
     if opts[:cover] do
       _ = :cover.stop()
@@ -90,13 +90,13 @@ defmodule Mix.Tasks.Eunit do
     end
   end
 
-  defp convert_opts(opts) do
-    Enum.flat_map(opts, &convert_opt/1)
+  defp convert_opts(opts, app_path) do
+    Enum.flat_map(opts, &convert_opt(&1, app_path))
   end
 
-  defp convert_opt({:verbose, true}), do: [:verbose]
-  defp convert_opt({:surefire, true}), do: [{:report, {:eunit_surefire, [{:dir, "."}]}}]
-  defp convert_opt(_), do: []
+  defp convert_opt({:verbose, true}, _), do: [:verbose]
+  defp convert_opt({:surefire, true}, app_path), do: [{:report, {:eunit_surefire, [{:dir, app_path}]}}]
+  defp convert_opt(_, _), do: []
 
   defp get_test_modules(ebin_path) do
     glob = Path.join([ebin_path, "*.beam"])
