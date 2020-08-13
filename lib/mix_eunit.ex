@@ -76,7 +76,16 @@ defmodule Mix.Tasks.Eunit do
 
     if opts[:cover] do
       coverdata = Path.join([app_path, "eunit.coverdata"])
-      :cover.export(coverdata)
+      case :cover.export(coverdata) do
+        :ok ->
+          Mix.shell().info(["Coverage data written to #{coverdata}"])
+          :ok
+        {:error, reason} ->
+          Mix.raise(
+            "Failed to export coverage data: #{inspect(reason)}"
+          )
+        end
+
       _ = :cover.stop()
     end
   end
