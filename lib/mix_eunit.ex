@@ -60,6 +60,7 @@ defmodule Mix.Tasks.Eunit do
       {:ok, _pid} = :cover.start()
 
       compile_path = Mix.Project.compile_path(project)
+
       case :cover.compile_beam_directory(to_charlist(compile_path)) do
         results when is_list(results) ->
           :ok
@@ -79,15 +80,15 @@ defmodule Mix.Tasks.Eunit do
 
     if opts[:cover] do
       coverdata = Path.join([app_path, "eunit.coverdata"])
+
       case :cover.export(coverdata) do
         :ok ->
           Mix.shell().info(["Coverage data written to #{coverdata}"])
           :ok
+
         {:error, reason} ->
-          Mix.raise(
-            "Failed to export coverage data: #{inspect(reason)}"
-          )
-        end
+          Mix.raise("Failed to export coverage data: #{inspect(reason)}")
+      end
 
       _ = :cover.stop()
     end
@@ -98,7 +99,10 @@ defmodule Mix.Tasks.Eunit do
   end
 
   defp convert_opt({:verbose, true}, _), do: [:verbose]
-  defp convert_opt({:surefire, true}, app_path), do: [{:report, {:eunit_surefire, [{:dir, app_path}]}}]
+
+  defp convert_opt({:surefire, true}, app_path),
+    do: [{:report, {:eunit_surefire, [{:dir, app_path}]}}]
+
   defp convert_opt(_, _), do: []
 
   defp get_test_modules(opts, ebin_path) do
